@@ -95,8 +95,8 @@ void priorityQueue::decreaseKey(int i, int new_val)
 		// make priority queue compliant
 	while (i != 0 && pqArray[parent(i)].cost > pqArray[i].cost)
 	{
-	swap(pqArray[i], pqArray[parent(i)]);
-	i = parent(i);
+		PQswap(pqArray[i], pqArray[parent(i)]);
+		i = parent(i);
 	}
 }
 
