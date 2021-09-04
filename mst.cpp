@@ -47,6 +47,9 @@ vector<nodeEdge> mst::getMinTree(int n)
 		
 		for(auto& N: nodeNeighbors)
 		{
+			if( !cMap[ mstGraph.getEdgeColor(ce.node, N) ] )
+				continue;
+			
 			if( nodeInClosedSet(N) )
 				continue;
 			

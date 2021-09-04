@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 		total += V.cost;
  	}
  		
- 	cout << "\nTOTAL EDGE COST: " << total << endl; 
+ 	cout << "TOTAL EDGE COST: " << total << endl; 
 
 	
 	/********* graph *********/
@@ -77,12 +77,18 @@ int main(int argc, char** argv)
 	
 	fin.close();
 	
-	mstG = mst{ graph(edgeW) };
+	mstG = mst{ graph(edgeW) }; mstG.setColor(eCLR::YLLW, false);
+	
+	cout << "\nEDGE\t\tCOST" << endl; total = 0;
 	
 	for(auto& V: mstG.getMinTree() )
-		cout << "(" << V.edge[0] << ", " << V.edge[1] << ")\t" << V.cost << '\t';
+	{
+		cout << "(" << V.edge[0] << ", " << V.edge[1] << ")\t\t";
+		cout << V.cost << '\n';
+		total += V.cost;
+	}
 		
-	cout << endl;
+	cout << "TOTAL EDGE COST: " << total << endl;
 	
 	/********* graph 1 *********/
 	
@@ -110,9 +116,9 @@ int main(int argc, char** argv)
 	//for(int i{0}; i < gsize; ++i)
 		//cout << "EDGE " << i+1 << "\tCOST\t";
 	
-	cout << "EDGE" << "\t\tCOST" << endl;
+	cout << "\nEDGE" << "\t\tCOST" << endl;
 	
-	total = 0;
+	total = 0; mstG.setColor(eCLR::RED, false);
 	
 	for(auto& V: mstG.getMinTree() )
 	{
@@ -121,7 +127,7 @@ int main(int argc, char** argv)
 		total += V.cost;
 	}
 		
-	cout << "TOTAL COST: " << total << endl;
+	cout << "TOTAL EDGE COST: " << total << endl;
 	
 	//char word; cin >> word; cout << static_cast<int>(word) << endl;
 

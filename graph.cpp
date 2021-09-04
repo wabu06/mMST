@@ -9,6 +9,43 @@ inline double prob()
 	// calculates distance between edges
 inline int getDistance(int drange) { return rand() % drange + 1; }
 
+eCLR getColor()
+{
+	int c = rand() % 3;
+	
+	switch(c)
+	{
+		case 0:
+			return eCLR::RED;
+		case 1:
+			return eCLR::YLLW;
+		case 2:
+			return eCLR::GRN;
+		default:
+			return eCLR::GRN;
+	}
+}
+
+ostream& operator<<(ostream& out, eCLR c)
+{
+	switch(c)
+	{
+		case eCLR::RED:
+			out << "RED";
+			break;
+		case eCLR::YLLW:
+			out << "YELLOW";
+			break;
+		case eCLR::GRN:
+			out << "GREEN";
+			break;
+		default:
+			out << "NONE";
+	}
+	
+	return out;
+}
+
 	// constuctor overloaded to create graph by specifying size, edge density,
 	// and distance range:
 	// S = size, density = edge density, maxd = distance range
@@ -41,7 +78,7 @@ graph::graph(int S, double density, int maxd)
 				{
 					d = getDistance(maxd);
 					
-					addEdge(i+1, j+1, d);
+					addEdge(i+1, j+1, d, getColor() );
 				} 
 			}
 		}
@@ -65,6 +102,8 @@ graph::graph( vector<int> vrtx )
 
 graph::graph(int vrtx, vectOfTuples EG)
 {
+	srand( time(nullptr) );
+	
 	size = 0;
 	
 	vertices = vector< vertexElem >();
@@ -76,11 +115,13 @@ graph::graph(int vrtx, vectOfTuples EG)
 	}
 	
 	for(auto& e: EG)
-		addEdge( get<0>(e), get<1>(e), get<2>(e) );
+		addEdge( get<0>(e), get<1>(e), get<2>(e), getColor() );
 }
 
 graph::graph(vectOfTuples EG)
 {
+	srand( time(nullptr) );
+	
 	size = 0;
 	
 	vertices = vector< vertexElem >();
@@ -99,7 +140,7 @@ graph::graph(vectOfTuples EG)
 			++size;
 		}
 		
-		addEdge( get<0>(e), get<1>(e), get<2>(e) );
+		addEdge( get<0>(e), get<1>(e), get<2>(e), getColor() );
 	}
 	
 	//cout << "size: " << size << endl;
@@ -186,7 +227,7 @@ vector<int> graph::getNeighbors(int x)
 
 	// adds edge between x & y, if one is currently nonexistent
 	// returns true if edge was added, if not return false
-bool graph::addEdge(int x, int y, int d)
+bool graph::addEdge(int x, int y, int d, eCLR c)
 {
 	auto xptr = nodeExist(x);
 	auto yptr = nodeExist(y);
@@ -200,8 +241,8 @@ bool graph::addEdge(int x, int y, int d)
 			return false;
 		else
 		{
-			xptr->edgeList.push_back( edge(y, d) );
-			yptr->edgeList.push_back( edge(x, d) );
+			xptr->edgeList.push_back( edge(y, d, c) );
+			yptr->edgeList.push_back( edge(x, d, c) );
 		
 			return true;
 		}
@@ -275,6 +316,27 @@ int graph::getEdgeValue(int x, int y)
 		return -1;
 }
 
+eCLR graph::getEdgeColor(int x, int y)
+{
+	auto xptr = nodeExist(x);
+	auto yptr = nodeExist(y);
+	
+	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
+	bool yfound = yptr != static_cast< vertElemItr >(nullptr) ? true: false;
+	
+	if ( xfound  && yfound )
+	{
+		for(auto& V: xptr->edgeList)
+		{
+			if (V.vertex == y)
+				return V.color;
+		}
+		
+		return eCLR::NONE;
+	}
+	else
+		return eCLR::NONE;
+}
 
 	// get the average path length of all the nodes connected to node "n"
 double graph::avePathLength(int n)

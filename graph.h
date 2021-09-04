@@ -11,13 +11,20 @@ using namespace std;
 #endif
 
 
+
+enum class eCLR {NONE, RED, YLLW, GRN}; // edge color
+
+ostream& operator<<(ostream& out, eCLR c);
+
 class edge
 {
 	public:
 		int vertex; // vertex endpoint of an edge
 		int weight; // edge weight (distance)
+		eCLR color;
 		
-		edge(int V = 1, int W = 0): vertex(V), weight(W) {}
+		edge(int V = 1, int W = 0, eCLR C = eCLR::GRN):
+								vertex(V), weight(W), color(C) {}
 };
 
 	// encapsulates the info for a particular vertex
@@ -87,7 +94,7 @@ class graph
 		
 			// adds edge between x & y, if one is currently nonexistent
 			// returns true if edge was added, if not return false
-		bool addEdge(int x, int y, int d = 1);
+		bool addEdge(int x, int y, int d, eCLR c = eCLR::GRN);
 		
 			// if there's an edge between x & y, delete it and return true
 			// else return false
@@ -100,4 +107,6 @@ class graph
 			// get the average path length of all the nodes connected to
 			// node "n"
 		double avePathLength(int n);
+		
+		eCLR getEdgeColor(int x, int y);
 };
