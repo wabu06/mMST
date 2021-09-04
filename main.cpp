@@ -77,7 +77,7 @@ int main(int argc, char** argv)
 	
 	fin.close();
 	
-	mstG = mst{ graph(edgeW) }; mstG.setColor(eCLR::YLLW, false);
+	mstG = mst{ graph(edgeW) }; mstG.setColor(eCLR::YLLW, true);
 	
 	cout << "\nEDGE\t\tCOST" << endl; total = 0;
 	
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 	
 	cout << "\nEDGE" << "\t\tCOST" << endl;
 	
-	total = 0; mstG.setColor(eCLR::RED, false);
+	total = 0; mstG.setColor(eCLR::RED, true);
 	
 	for(auto& V: mstG.getMinTree() )
 	{

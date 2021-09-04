@@ -33,12 +33,13 @@ class mst
 	public:
 			// constructor to appropriately initialize an instance of the 
 			// minimum spanning tree class
-		mst( graph G = graph(),
-			priorityQueue OS = priorityQueue(),
+		mst( graph G = graph(), priorityQueue OS = priorityQueue(),
 			vector<nodeEdge> CS = vector<nodeEdge>(),
-			map<eCLR, bool> M = map<eCLR, bool> { {eCLR::RED, true}, {eCLR::YLLW, true}, {eCLR::GRN, true} } ):
-								mstGraph(G), openSet(OS), closedSet(CS),
-								cMap(M) {}
+			map<eCLR, bool> M = map<eCLR, bool> { {eCLR::RED, false},
+												{eCLR::YLLW, false},
+												{eCLR::GRN, false} }
+			): mstGraph(G), openSet(OS), closedSet(CS), cMap(M) {}
+
 		
 			// method to find minimum spanning tree taking a start node as
 			// input, algorithm utilized is based on Jarnik-Prim
