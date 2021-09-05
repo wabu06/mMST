@@ -1,17 +1,16 @@
 #include "graph.h"
 
 
-
-	// calculates probablity of edges between vertices
-inline double prob()
-	{ return static_cast<double>( rand() ) / static_cast<double>(RAND_MAX); }
-	
-	// calculates distance between edges
-inline int getDistance(int drange) { return rand() % drange + 1; }
-
-eCLR getColor()
+void graph::initSeeds()
 {
-	int c = rand() % 3;
+	seeds[0] = time(nullptr);
+	seeds[1] = 2 * seeds[0];
+	seeds[2] = 3 * seeds[1];
+}
+
+eCLR graph::getColor()
+{
+	int c = nrand48(seeds) % 3;
 	
 	switch(c)
 	{
@@ -51,7 +50,7 @@ ostream& operator<<(ostream& out, eCLR c)
 	// S = size, density = edge density, maxd = distance range
 graph::graph(int S, double density, int maxd)
 {
-	srand( time(nullptr) );
+	initSeeds();
 	
 	size = S;
 	
@@ -102,7 +101,7 @@ graph::graph( vector<int> vrtx )
 
 graph::graph(int vrtx, vectOfTuples EG)
 {
-	srand( time(nullptr) );
+	initSeeds();
 	
 	size = 0;
 	
@@ -120,7 +119,7 @@ graph::graph(int vrtx, vectOfTuples EG)
 
 graph::graph(vectOfTuples EG)
 {
-	srand( time(nullptr) );
+	initSeeds();
 	
 	size = 0;
 	

@@ -50,6 +50,17 @@ class graph
 		// graph implemented via adjacency list
 	vector< vertexElem > vertices;
 	
+	unsigned short seeds[3];
+	
+	void initSeeds();
+	
+	double prob() { return erand48(seeds); }
+
+		// calculates distance between edges
+	int getDistance(int drange) { return nrand48(seeds) % drange + 1; }
+
+	eCLR getColor();
+	
 	public:
 			// default constructor creates a graph of just one unconnected
 			// vertex
