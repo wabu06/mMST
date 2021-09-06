@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 	
 	int gsize; // node count
 	
-	if ( !getFileData("graph.dat", edgeW, gsize) )
+	if ( !getFileData("g4gGraph.txt", edgeW, gsize) )
 	{
 		cerr << "Error opening file!!" << endl;
 		return 1;
