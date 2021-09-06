@@ -43,11 +43,11 @@ void showMinTree(graph G, int& gs, eCLR C = eCLR::NONE)
 	int total{0}; // used to calculate edge cost total
 	
 		// find the minimum spanning tree and display it
-	for(auto& M: mstG.getMinTree() )
+	for(auto& V: mstG.getMinTree() )
 	{
-		cout << "(" << M.second.edge[0] << ", " << M.second.edge[1] << ")";
-		cout << "\t\t" << M.second.cost  << '\n';
-		total += M.second.cost;
+		cout << "(" << V.edge[0] << ", " << V.edge[1] << ")";
+		cout << "\t\t" << V.cost  << '\n';
+		total += V.cost;
  	}
  		
  	cout << "TOTAL EDGE COST: " << total << endl; 

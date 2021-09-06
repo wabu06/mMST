@@ -1,9 +1,21 @@
 #include "mst.h"
 
 
+	// returns true if given node is in the closed set
+bool mst::nodeInClosedSet(int n)
+{
+	for(auto& V: closedSet)
+	{
+		if (V.node == n)
+			return true;
+	}
+	
+	return false;
+}
+
 	// method to find minimum spanning tree, taking a start node as input
 	// algorithm utilized is  based on Jarnik-Prim
-map<int, nodeEdge> mst::getMinTree(int n)
+vector<nodeEdge> mst::getMinTree(int n)
 {
 		// initialize open and closed sets, to empty
 	openSet.emptyPQ();
@@ -24,22 +36,21 @@ map<int, nodeEdge> mst::getMinTree(int n)
 	while( openSet.notEmpty() )
 	{
 		ce = openSet.getMin();
-		closedSet[ce.node] = ce;
+		closedSet.push_back(ce);
 		
 		nodeNeighbors = mstGraph.getNeighbors( ce.node );
 		
 			// if a node has no neighbors then a minimum spanning tree cannot
 			// be found
 		if (nodeNeighbors.size() == 0)
-			return map<int, nodeEdge>{ { -1, nodeEdge(-1, array<int, 2>{-1, -1}, -1) } };
+			return vector<nodeEdge>{ nodeEdge(-1, array<int, 2>{-1, -1}, -1) };
 		
 		for(auto& N: nodeNeighbors)
 		{
 			if( cMap[ mstGraph.getEdgeColor(ce.node, N) ] )
 				continue;
 			
-				// do not add an edge to the open set if it's in the closed set
-			if( closedSet.count(N) == 1)
+			if( nodeInClosedSet(N) )
 				continue;
 			
 			ev = mstGraph.getEdgeValue(ce.node, N);
@@ -79,5 +90,5 @@ map<int, nodeEdge> mst::getMinTree(int n)
 		return closedSet;
 	}
 	else
-		return map<int, nodeEdge>{ { -1, nodeEdge(-1, array<int, 2>{-1, -1}, -1) } };
+		return vector<nodeEdge>{ nodeEdge(-1, array<int, 2>{-1, -1}, -1) };
 }
