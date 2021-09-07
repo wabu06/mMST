@@ -67,7 +67,7 @@ map<int, nodeEdge> mst::getMinTree(int n)
 				}
 			}
 		}
-	}
+	}	
 		// checks to see if a minimum spanning tree could be found, a valid 
 		// minimum spanning tree is found if the node count in the closed set
 		// matches the node count of the graph, so if a valid minimum spanning

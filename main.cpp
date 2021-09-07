@@ -28,7 +28,7 @@ bool getFileData(const char* fn, vectOfTuples& VoT, int& gs)
 	return true;
 }
 
-void showMinTree(graph G, int& gs, eCLR C = eCLR::NONE)
+void showMinTree(graph G, int gs = 0, eCLR C = eCLR::NONE)
 {
 		// create an instance of the minimum spanning tree class,
 		// with a graph instance as input, the graph instance has as it's input
@@ -94,6 +94,8 @@ int main(int argc, char** argv)
 	}
 	
 	showMinTree( graph(edgeW), gsize, eCLR::RED );
+	
+	showMinTree( graph(50, 0.4, 10) );
 		
 	//mstG.setColor(eCLR::RED, true);
 	
