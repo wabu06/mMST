@@ -5,6 +5,9 @@
 	// algorithm utilized is  based on Jarnik-Prim
 map<int, nodeEdge> mst::getMinTree(int n)
 {
+	if( !mstGraph.nodeExist(n) )
+		return map<int, nodeEdge>{ { -1, nodeEdge(-1, array<int, 2>{-1, -1}, -1) } };
+		
 		// initialize open and closed sets, to empty
 	openSet.emptyPQ();
 	closedSet.clear();
@@ -31,7 +34,7 @@ map<int, nodeEdge> mst::getMinTree(int n)
 			// if a node has no neighbors then a minimum spanning tree cannot
 			// be found
 		if (nodeNeighbors.size() == 0)
-			return map<int, nodeEdge>{ { -1, nodeEdge(-1, array<int, 2>{-1, -1}, -1) } };
+			return map<int, nodeEdge>{ { -2, nodeEdge(-2, array<int, 2>{-2, -2}, -2) } };
 		
 		for(auto& N: nodeNeighbors)
 		{
@@ -67,7 +70,10 @@ map<int, nodeEdge> mst::getMinTree(int n)
 				}
 			}
 		}
-	}	
+	}
+	
+	//cout << "CS size: " << closedSet.size() << endl;
+		
 		// checks to see if a minimum spanning tree could be found, a valid 
 		// minimum spanning tree is found if the node count in the closed set
 		// matches the node count of the graph, so if a valid minimum spanning
@@ -79,5 +85,5 @@ map<int, nodeEdge> mst::getMinTree(int n)
 		return closedSet;
 	}
 	else
-		return map<int, nodeEdge>{ { -1, nodeEdge(-1, array<int, 2>{-1, -1}, -1) } };
+		return map<int, nodeEdge>{ { -3, nodeEdge(-3, array<int, 2>{-3, -3}, -3) } };
 }

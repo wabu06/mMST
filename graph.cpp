@@ -73,10 +73,10 @@ graph::graph(int S, double density, int maxd)
 					d = getDistance(maxd);
 					c = getColor();
 					
-					V.second.push_back( edge(j, d, c) );
-					vertices[j].push_back( edge(i, d, c) );
+					//V.second.push_back( edge(j, d, c) );
+					//vertices[j].push_back( edge(i, d, c) );
 					
-					//addEdge(i, j, d, getColor() );
+					addEdge(i, j, d, c);
 				}
 			}
 		}
