@@ -5,6 +5,7 @@
 #include<vector>
 #include<array>
 #include<tuple>
+#include<map>
 
 using namespace std;
 
@@ -23,22 +24,9 @@ class edge
 		int weight; // edge weight (distance)
 		eCLR color;
 		
-		edge(int V = 1, int W = 0, eCLR C = eCLR::GRN):
+		edge(int V = 0, int W = 0, eCLR C = eCLR::GRN):
 								vertex(V), weight(W), color(C) {}
 };
-
-	// encapsulates the info for a particular vertex
-class vertexElem
-{
-	public:
-		int vertexID;
-		vector<edge> edgeList;
-		
-		vertexElem( int ID = 0, vector<edge> EL = vector<edge>() ):
-					vertexID(ID), edgeList(EL) {}
-};
-
-using vertElemItr = vector< vertexElem >::iterator;
 
 using intTup = tuple<int, int, int>;
 using vectOfTuples = vector< tuple<int, int, int> >;
@@ -48,7 +36,7 @@ class graph
 	int size; // current graph size (amount of nodes/vertices)
 	
 		// graph implemented via adjacency list
-	vector< vertexElem > vertices;
+	map< int, vector<edge> > vertices;
 	
 	unsigned short seeds[3];
 	
@@ -65,7 +53,7 @@ class graph
 			// default constructor creates a graph of just one unconnected
 			// vertex
 		graph(int S = 1)
-			{ size = S; vertices = vector< vertexElem >(size); }
+			{ size = S; vertices = map< int, vector<edge> >{ {0, vector<edge>()} }; }
 
 			// constuctor overloaded to create graph by specifying size,
 			// edge density, and distance range:
@@ -78,12 +66,11 @@ class graph
 		
 		graph(vectOfTuples EG);
 		
-			// add a vertex to the graph
-		//void addVertex() 
-			//{ size++; vertices.push_back( vector<edge>() ); }
+			// adds a vertex to the graph, returns true if successful
+		bool addVertex(int n); 
 		
-		// delVertex();
-			// first remove edges, from the adjacency list
+			// deletes vertex <n> from graph, returns true if successful
+		bool delVertex(int n);
 		
 			// total vertex count
 		int getVertexCount() { return size; }
@@ -91,11 +78,8 @@ class graph
 			// total edge count
 		int getEdges();
 		
-			// returns pointer to node if node "n" exists, returns nullptr if 
-			// node is nonexistent
-		vector< vertexElem >::iterator nodeExist(int n);
-		
-		bool nodeFound(int x);
+			// returns true if node "n" exists
+		bool nodeExist(int n) { return vertices.count(n) == 1 ? true: false; }
 		
 			// returns true if there's an edge from node x to y
 		bool isAdjacent(int x, int y);

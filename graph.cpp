@@ -54,18 +54,13 @@ graph::graph(int S, double density, int maxd)
 	
 	size = S;
 	
-	vertices = vector< vertexElem >(size);
-	
-	int vID = 0;
-	
-	for(auto& V: vertices)
-	{
-		V = vertexElem(vID);
-		vID++;
-	}
+	for(int vID = 0; vID < size; ++vID)
+		vertices[vID] = vector<edge>();
 	
 	int d; // edge distance
 	int i = 0;
+	
+	eCLR c;
 	
 	for(auto& V: vertices)
 	{
@@ -76,8 +71,12 @@ graph::graph(int S, double density, int maxd)
 				if (prob() < density)
 				{
 					d = getDistance(maxd);
+					c = getColor();
 					
-					addEdge(i, j, d, getColor() );
+					V.second.push_back( edge(j, d, c) );
+					vertices[j].push_back( edge(i, d, c) );
+					
+					//addEdge(i, j, d, getColor() );
 				}
 			}
 		}
@@ -90,11 +89,11 @@ graph::graph( vector<int> vrtx )
 {
 	size = 0;
 	
-	vertices = vector< vertexElem >();
+	vertices = map< int, vector<edge> >{};
 	
 	for(auto& V: vrtx)
 	{
-		vertices.push_back(vertexElem(V));
+		vertices[V] = vector<edge>();
 		size++;
 	}
 }
@@ -105,11 +104,11 @@ graph::graph(int vrtx, vectOfTuples EG)
 	
 	size = 0;
 	
-	vertices = vector< vertexElem >();
+	vertices = map< int, vector<edge> >{};
 	
 	for(int i = 0; i < vrtx; ++i)
 	{
-		vertices.push_back( vertexElem(i) );
+		vertices[i] = vector<edge>();
 		++size;
 	}
 	
@@ -123,19 +122,19 @@ graph::graph(vectOfTuples EG)
 	
 	size = 0;
 	
-	vertices = vector< vertexElem >();
+	vertices = map< int, vector<edge> >{};
 	
 	for(auto& e: EG)
 	{
-		if ( !nodeFound( get<0>(e) ) )
+		if ( !nodeExist( get<0>(e) ) )
 		{
-			vertices.push_back( vertexElem( get<0>(e) ) );
+			vertices[ get<0>(e) ] = vector<edge>();
 			++size;
 		}
 		
-		if ( !nodeFound( get<1>(e) ) )
+		if ( !nodeExist( get<1>(e) ) )
 		{
-			vertices.push_back( vertexElem( get<1>(e) ) );
+			vertices[ get<1>(e) ] = vector<edge>();
 			++size;
 		}
 		
@@ -145,6 +144,41 @@ graph::graph(vectOfTuples EG)
 	//cout << "size: " << size << endl;
 }
 
+	// add a vertex/node to graph
+bool graph::addVertex(int n) 
+{ 
+	if( nodeExist(n) )
+		return false;
+	else
+	{
+		vertices[n] = vector<edge>(); size++; 
+		return true;
+	}
+}
+
+	// deletes a vertex/node from graph
+bool graph::delVertex(int n)
+{
+	vector<edge>::iterator V;
+	
+	if( nodeExist(n) )
+	{
+		for(auto& E: vertices[n])
+		{
+			for(auto itr = vertices[E.vertex].begin(); itr->vertex != n; ++itr)
+				V = itr;
+			
+			vertices[E.vertex].erase(V);
+		}
+		
+		vertices.erase(n);
+		
+		return true;
+	}
+	else
+		return false;
+}
+
 	// total edge count
 int graph::getEdges()
 {
@@ -152,9 +186,9 @@ int graph::getEdges()
 	
 	for(int i = 0; i < size; i++)
 	{
-		for(auto& E: vertices[i].edgeList)
+		for(auto& E: vertices[i])
 		{
-			if(E.vertex > vertices[i].vertexID)
+			if(E.vertex > i)
 				count++;
 		}
 	}
@@ -162,39 +196,12 @@ int graph::getEdges()
 	return count;
 }
 
-	// returns pointer to node if node "n" exists, returns nullptr if 
-	// node is nonexistent
-vertElemItr graph::nodeExist(int n)
-{
-	for(auto itr = vertices.begin(); itr != vertices.end(); itr++)
-	{
-		if(itr->vertexID == n)
-			return itr;
-	}
-	
-	//return vertices.end();
-	return static_cast< vertElemItr >(nullptr);
-}
-
-bool graph::nodeFound(int x)
-{
-	vertElemItr xptr = nodeExist(x);
-	
-	return xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-}
-
 	// returns true if there's an edge from node x to y
 bool graph::isAdjacent(int x, int y)
-{
-	vertElemItr xptr = nodeExist(x);
-	vertElemItr yptr = nodeExist(y);
-	
-	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	bool yfound = yptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	
-	if ( xfound  && yfound )
+{	
+	if ( nodeExist(x) && nodeExist(y) )
 	{
-		for(auto& E: xptr->edgeList)
+		for(auto& E: vertices[x])
 		{
 			if (E.vertex == y)
 				return true;
@@ -209,15 +216,11 @@ bool graph::isAdjacent(int x, int y)
 	// get all vertices connected to x
 vector<int> graph::getNeighbors(int x)
 {
-	vertElemItr xptr = nodeExist(x);
+	vector<int> neighbors = vector<int>();
 	
-	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	
-	vector<int> neighbors = vector<int>(0);
-	
-	if ( xfound )
+	if ( nodeExist(x) )
 	{
-		for(auto& E: xptr->edgeList)
+		for(auto& E: vertices[x])
 			neighbors.push_back(E.vertex);
 	}
 	
@@ -228,20 +231,14 @@ vector<int> graph::getNeighbors(int x)
 	// returns true if edge was added, if not return false
 bool graph::addEdge(int x, int y, int d, eCLR c)
 {
-	auto xptr = nodeExist(x);
-	auto yptr = nodeExist(y);
-	
-	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	bool yfound = yptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	
-	if ( xfound  && yfound )
+	if ( nodeExist(x) && nodeExist(y) )
 	{
 		if ( isAdjacent(x, y) && isAdjacent(y, x) )
 			return false;
 		else
 		{
-			xptr->edgeList.push_back( edge(y, d, c) );
-			yptr->edgeList.push_back( edge(x, d, c) );
+			vertices[x].push_back( edge(y, d, c) );
+			vertices[y].push_back( edge(x, d, c) );
 		
 			return true;
 		}
@@ -253,31 +250,25 @@ bool graph::addEdge(int x, int y, int d, eCLR c)
 	// if there's an edge between x & y, delete it and return true
 	// else return false
 bool graph::deleteEdge(int x, int y)
-{
-	auto xptr = nodeExist(x);
-	auto yptr = nodeExist(y);
-	
-	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	bool yfound = yptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	
-	if ( xfound  && yfound )
+{	
+	if ( nodeExist(x) && nodeExist(y) )
 	{
 		if ( isAdjacent(x, y) && isAdjacent(y, x) )
 		{
-			for (auto itr = xptr->edgeList.begin(); itr != xptr->edgeList.end(); itr++)
+			for (auto itr = vertices[x].begin(); itr != vertices[x].end(); ++itr)
 			{
 				if (itr->vertex == y)
 				{
-					xptr->edgeList.erase(itr);
+					vertices[x].erase(itr);
 					break;
 				}
 			}
 		
-			for (auto itr = yptr->edgeList.begin(); itr != yptr->edgeList.end(); itr++)
+			for (auto itr = vertices[y].begin(); itr != vertices[y].end(); ++itr)
 			{
 				if (itr->vertex == x)
 				{
-					yptr->edgeList.erase(itr);
+					vertices[y].erase(itr);
 					break;
 				}
 			}
@@ -291,22 +282,15 @@ bool graph::deleteEdge(int x, int y)
 		return false;
 }
 
-
 	// get edge weight/distance from x to y, if there is no edge return -1
 int graph::getEdgeValue(int x, int y)
-{
-	auto xptr = nodeExist(x);
-	auto yptr = nodeExist(y);
-	
-	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	bool yfound = yptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	
-	if ( xfound  && yfound )
+{	
+	if ( nodeExist(x) && nodeExist(y) )
 	{
-		for(auto& V: xptr->edgeList)
+		for(auto& E: vertices[x])
 		{
-			if (V.vertex == y)
-				return V.weight;
+			if (E.vertex == y)
+				return E.weight;
 		}
 		
 		return -1;
@@ -316,19 +300,13 @@ int graph::getEdgeValue(int x, int y)
 }
 
 eCLR graph::getEdgeColor(int x, int y)
-{
-	auto xptr = nodeExist(x);
-	auto yptr = nodeExist(y);
-	
-	bool xfound = xptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	bool yfound = yptr != static_cast< vertElemItr >(nullptr) ? true: false;
-	
-	if ( xfound  && yfound )
+{	
+	if ( nodeExist(x) && nodeExist(y) )
 	{
-		for(auto& V: xptr->edgeList)
+		for(auto& E: vertices[x])
 		{
-			if (V.vertex == y)
-				return V.color;
+			if (E.vertex == y)
+				return E.color;
 		}
 		
 		return eCLR::NONE;
@@ -340,22 +318,19 @@ eCLR graph::getEdgeColor(int x, int y)
 	// get the average path length of all the nodes connected to node "n"
 double graph::avePathLength(int n)
 {
-	double total = 0;
+	double total = 0.0;
 	
-	int eSize = 0;
+	int eCount;
 	
-	for(auto& V: vertices)
+	if ( nodeExist(n) )
 	{
-		if (V.vertexID == n)
-		{
-			eSize = V.edgeList.size();
-			
-			for(auto& E: V.edgeList)
-				total += static_cast<double>(E.weight);
-			
-			break;
-		}
+		eCount = vertices[n].size();
+		
+		for(auto& E: vertices[n])
+			total += static_cast<double>(E.weight);
+
+		return total / static_cast<double>(eCount);
 	}
-	
-	return total / static_cast<double>( eSize );
+	else
+		return 0.0;
 }
