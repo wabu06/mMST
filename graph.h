@@ -99,6 +99,8 @@ class graph
 			// if there is no edge return -1
 		int getEdgeValue(int x, int y);
 		
+		bool setEdgeValue(int x, int y, int ev);
+		
 			// get the average path length of all the nodes connected to
 			// node "n"
 		double avePathLength(int n);

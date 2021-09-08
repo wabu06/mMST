@@ -299,6 +299,39 @@ int graph::getEdgeValue(int x, int y)
 		return -1;
 }
 
+bool graph::setEdgeValue(int x, int y, int ev)
+{
+	if ( nodeExist(x) && nodeExist(y) )
+	{
+		if ( isAdjacent(x, y) && isAdjacent(y, x) )
+		{
+			for(auto& E: vertices[x])
+			{
+				if (E.vertex == y)
+				{
+					E.weight = ev;
+					break;
+				}
+			}
+			
+			for(auto& E: vertices[y])
+			{
+				if (E.vertex == x)
+				{
+					E.weight = ev;
+					break;
+				}
+			}
+			
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
 eCLR graph::getEdgeColor(int x, int y)
 {	
 	if ( nodeExist(x) && nodeExist(y) )
