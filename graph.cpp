@@ -173,6 +173,8 @@ bool graph::delVertex(int n)
 		
 		vertices.erase(n);
 		
+		size--;
+		
 		return true;
 	}
 	else
